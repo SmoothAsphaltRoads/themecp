@@ -24,5 +24,6 @@ export function calculateLevelDelta(
     return acc + effectiveScore;
   }, 0);
 
+  // TA-CPD scales normalized performance around the threshold into a level-space delta.
   return Number((2.0 * (sum - THRESHOLD)).toFixed(2));
 }

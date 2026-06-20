@@ -247,6 +247,14 @@ export default function HomePage() {
               Go to Codeforces, submit a deliberately broken Haskell script to Problem 4A (Watermelon) to
               trigger a Compilation Error.
             </p>
+            <a
+              href="https://codeforces.com/problemset/problem/4/A"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 inline-block rounded-md border border-amber-400/60 px-3 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-500/20"
+            >
+              Open Codeforces 4A
+            </a>
             <button
               type="button"
               onClick={callVerify}
