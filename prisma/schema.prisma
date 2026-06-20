@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String         @id @default(cuid())
+  handle           String         @unique
+  currentLevel     Float          @default(15.0)
+  solvedProblemIds String[]
+  activeContest    ActiveContest?
+  pendingAuth      PendingAuth?
+}
+
+model ActiveContest {
+  id        String @id @default(cuid())
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startTime Int
+  problems  Json
+}
+
+model PendingAuth {
+  id               String @id @default(cuid())
+  userId           String @unique
+  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  targetContestId  Int
+  targetIndex      String
+  requiredLanguage String
+  issuedAt         Int
+}
+
+model ProblemBank {
+  id        String   @id
+  contestId Int
+  index     String
+  name      String
+  rating    Int
+  tags      String[]
+}
