@@ -1,5 +1,6 @@
 const WEIGHTS = [0.15, 0.2, 0.3, 0.35];
 const THRESHOLD = 0.5;
+const MAX_PENALTY_MINUTES = 240;
 
 export function getRatingsForLevel(level: number): number[] {
   const baseRating = 800 + (Math.floor(level) - 1) * 50;
@@ -17,7 +18,7 @@ export function calculateLevelDelta(
     }
 
     const penaltyTime = result.solveTimeMinutes + result.wrongAttempts * 10;
-    const decayFactor = Math.max(0.5, 1.0 - penaltyTime / 240);
+    const decayFactor = Math.max(0.5, 1.0 - penaltyTime / MAX_PENALTY_MINUTES);
     const effectiveScore = weight * decayFactor;
 
     return acc + effectiveScore;

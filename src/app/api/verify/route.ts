@@ -29,6 +29,10 @@ type ContestProblem = {
   rating: number;
 };
 
+const MAX_CONTEST_MINUTES = 240;
+const MIN_LEVEL = 1.0;
+const MAX_LEVEL = 50.0;
+
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as VerifyRequest;
@@ -47,6 +51,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No active contest found.' }, { status: 404 });
     }
 
+    const activeContest = user.activeContest;
+
     const response = await fetch(
       `https://codeforces.com/api/user.status?handle=${encodeURIComponent(handle)}&from=1&count=50`,
       { cache: 'no-store' }
@@ -63,10 +69,10 @@ export async function POST(request: Request) {
     }
 
     const submissions = data.result.filter(
-      (submission) => (submission.creationTimeSeconds ?? 0) >= user.activeContest!.startTime
+      (submission) => (submission.creationTimeSeconds ?? 0) >= activeContest.startTime
     );
 
-    const sessionProblems = user.activeContest.problems as ContestProblem[];
+    const sessionProblems = activeContest.problems as ContestProblem[];
 
     const results = sessionProblems.map((problem) => {
       const problemSubmissions = submissions
@@ -81,12 +87,12 @@ export async function POST(request: Request) {
       if (!okSubmission) {
         return {
           solved: false,
-          solveTimeMinutes: 240,
+          solveTimeMinutes: MAX_CONTEST_MINUTES,
           wrongAttempts: 0,
         };
       }
 
-      const okTimestamp = okSubmission.creationTimeSeconds ?? user.activeContest!.startTime;
+      const okTimestamp = okSubmission.creationTimeSeconds ?? activeContest.startTime;
       const wrongAttempts = problemSubmissions.filter(
         (submission) =>
           (submission.creationTimeSeconds ?? 0) <= okTimestamp &&
@@ -96,7 +102,7 @@ export async function POST(request: Request) {
 
       return {
         solved: true,
-        solveTimeMinutes: (okTimestamp - user.activeContest!.startTime) / 60,
+        solveTimeMinutes: (okTimestamp - activeContest.startTime) / 60,
         wrongAttempts,
       };
     });
@@ -108,7 +114,7 @@ export async function POST(request: Request) {
       .map((problem) => problem.id);
 
     const nextSolvedIds = Array.from(new Set([...user.solvedProblemIds, ...solvedNow]));
-    const newLevel = Math.min(50.0, Math.max(1.0, Number((user.currentLevel + delta).toFixed(2))));
+    const newLevel = Math.min(MAX_LEVEL, Math.max(MIN_LEVEL, Number((user.currentLevel + delta).toFixed(2))));
 
     await db.$transaction([
       db.user.update({
