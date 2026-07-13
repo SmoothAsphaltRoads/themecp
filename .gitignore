@@ -1,0 +1,52 @@
+```
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+target/
+
+# TypeScript/JavaScript
+*.js.map
+*.tsbuildinfo
+.nyc_output/
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Database
+prisma/migrations/
+*.db
+*.db-journal
+
+# Vite
+!.vite/
+vite.config.ts.bak
+
+# Compiled JavaScript (if any TypeScript compilation occurs)
+*.mjs
+*.cjs
+```
